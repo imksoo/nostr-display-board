@@ -157,6 +157,7 @@ h2 {
   margin: 0.5em 1em;
   border: 0.5px solid #ccc;
   border-radius: 0.5em;
+  background-color: #f5ebeb;
 }
 .div-events-content p {
   margin: 0;
