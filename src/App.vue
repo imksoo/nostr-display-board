@@ -132,16 +132,34 @@ setInterval(() => {
   <div v-for="u in getSortedUserEvents()" class="div-events">
     <h2><a :href="'https://relay-jp.nostr.wirednet.jp/index.html?' + Nostr.nip19.npubEncode(u[0])">{{
       getProfile(u[0]).display_name || getProfile(u[0]).name || getProfile(u[0]).pubkey }}</a></h2>
-    <p v-for="e in u[1].events.slice(-1).reverse()">
-      <span>{{ new Date(e.created_at * 1000).toLocaleTimeString() }}</span>
-      <span>&nbsp;</span>
-      <span>{{ e.content.split("\n").slice(0, 1).join("\n") }}</span>
-    </p>
+    <div class="div-events-content">
+      <p v-for="e in u[1].events.slice(-3).reverse()">
+        <span>{{ new Date(e.created_at * 1000).toLocaleTimeString() }}</span>
+        <span>&nbsp;</span>
+        <span>{{ e.content.split("\n").slice(0, 1).join("\n") }}</span>
+      </p>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
+h2 {
+  margin: 0.1em;
+  padding: 0.1em;
+  margin-block: 0.1em;
+  font-size: 18px;
+}
 .div-events {
-  margin: 1em;
+  margin: 0.2em;
+}
+.div-events-content {
+  padding: 0.5em;
+  margin: 0.5em 1em;
+  border: 0.5px solid #ccc;
+  border-radius: 0.5em;
+}
+.div-events-content p {
+  margin: 0;
+  font-size: 16px;
 }
 </style>
