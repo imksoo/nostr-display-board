@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
+import { ref } from "vue";
 import * as Nostr from "nostr-tools";
 
 import { feedRelays, profileRelays, pool, normalizeUrls } from "./relays";
