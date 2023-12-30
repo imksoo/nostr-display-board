@@ -144,20 +144,31 @@ setInterval(() => {
 
 <style lang="scss">
 h2 {
-  margin: 0.1em;
-  padding: 0.1em;
-  margin-block: 0.1em;
+  margin-block: 0;
   font-size: 18px;
+  width: 100%;
+  max-width: 100%;
+}
+h2>a {
+  color: #222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-width: 100%;
+  display: inline-block;
 }
 .div-events {
   margin: 0.2em;
 }
 .div-events-content {
-  padding: 0.5em;
-  margin: 0.5em 1em;
+  padding: 0.5rem;
+  margin: 0.5rem 0 1rem;
   border: 0.5px solid #ccc;
-  border-radius: 0.5em;
+  border-radius: 7px;
   background-color: #f5ebeb;
+  white-space: normal;
+  word-break: break-word;
+  word-wrap: break-word;
 }
 .div-events-content p {
   margin: 0;
