@@ -130,14 +130,23 @@ setInterval(() => {
 <template>
   <h1>Japanese Nostr Board</h1>
   <div v-for="u in getSortedUserEvents()" class="div-events">
-    <h2><a :href="'https://relay-jp.nostr.wirednet.jp/index.html?' + Nostr.nip19.npubEncode(u[0])">{{
+    <h2><a target="_blank" :href="'https://relay-jp.nostr.wirednet.jp/index.html?' + Nostr.nip19.npubEncode(u[0])">{{
       getProfile(u[0]).display_name || getProfile(u[0]).name || getProfile(u[0]).pubkey }}</a></h2>
-    <div class="div-events-content">
-      <p v-for="e in u[1].events.slice(-3).reverse()">
-        <span>{{ new Date(e.created_at * 1000).toLocaleTimeString() }}</span>
-        <span>&nbsp;</span>
-        <span>{{ e.content.split("\n").slice(0, 1).join("\n") }}</span>
-      </p>
+    <hr />
+    <div class="div-events-container">
+      <img class="div-events-avator"
+        :src="getProfile(u[0]).picture ? getProfile(u[0]).picture : 'https://placehold.jp/623e70/d7c6c6/60x60.png?text=Unknown'"
+        @error="(e) => { (e.target as HTMLImageElement).src = 'https://placehold.jp/391e6c/d7c6c6/60x60.png?text=Image%0ANot%20Found' }" />
+      <div class="div-events-content">
+        <template v-for="e in u[1].events.slice(-1).reverse()">
+          <p>
+            <span>{{ new Date(e.created_at * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+            }}</span>
+            <span>&nbsp;&nbsp;</span>
+            <span>{{ e.content.split("\n").slice(0, 1).join("\n") }}</span>
+          </p>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -149,6 +158,7 @@ h2 {
   width: 100%;
   max-width: 100%;
 }
+
 h2>a {
   color: #222;
   overflow: hidden;
@@ -157,12 +167,36 @@ h2>a {
   max-width: 100%;
   display: inline-block;
 }
-.div-events {
-  margin: 0.2em;
+
+hr {
+  margin: 0.2rem;
+  border: none;
+  border-top: 1px solid #ccc;
 }
+
+.div-events {
+  margin: 0 0.2em;
+}
+
+.div-events-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.div-events-avator {
+  width: 3rem;
+  max-width: 3rem;
+  height: 3rem;
+  max-height: 3rem;
+  border-radius: 15%;
+  margin: 0.2rem 0.5rem 1rem 0.5rem;
+}
+
 .div-events-content {
+  flex: 1;
   padding: 0.5rem;
-  margin: 0.5rem 0 1rem;
+  margin: 0.2rem 0.5rem 1rem 0.5rem;
   border: 0.5px solid #ccc;
   border-radius: 7px;
   background-color: #f5ebeb;
@@ -170,8 +204,10 @@ h2>a {
   word-break: break-word;
   word-wrap: break-word;
 }
+
 .div-events-content p {
   margin: 0;
   font-size: 16px;
+  line-height: 1.2;
 }
 </style>
