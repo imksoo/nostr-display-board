@@ -8,7 +8,7 @@ import { addUserEvent, getSortedUserEvents, userAndEvents } from "./store";
 pool.subscribe(
   [{
     kinds: [1],
-    limit: 100,
+    limit: 500,
   }],
   [...new Set(normalizeUrls([...feedRelays]))],
   async (ev, _isAfterEose, _relayURL) => {
@@ -142,12 +142,12 @@ setInterval(() => {
         :src="getProfile(u[0]).picture ? getProfile(u[0]).picture : 'https://placehold.jp/623e70/d7c6c6/60x60.png?text=Unknown'"
         @error="(e) => { (e.target as HTMLImageElement).src = 'https://placehold.jp/391e6c/d7c6c6/60x60.png?text=Image%0ANot%20Found' }" />
       <div class="div-events-content">
-        <template v-for="e in u[1].events.slice(-1).reverse()">
-          <p>
-            <span>{{ new Date(e.created_at * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-            }}</span>
-            <span>&nbsp;&nbsp;</span>
+        <template v-for="(e, i) in u[1].events.slice(-3).reverse()">
+          <p :class="'p-content-'+i">
             <span>{{ e.content.split("\n").slice(0, 1).join("\n") }}</span>
+            <span>&nbsp;</span>
+            <span>({{ new Date(e.created_at * 1000).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
+            }})</span>
           </p>
         </template>
       </div>
@@ -193,8 +193,9 @@ hr {
   max-width: 3rem;
   height: 3rem;
   max-height: 3rem;
-  border-radius: 15%;
+  border-radius: 4px;
   margin: 0.2rem 0.5rem 1rem 0.5rem;
+  object-fit: cover;
 }
 
 .div-events-content {
@@ -202,7 +203,7 @@ hr {
   padding: 0.5rem;
   margin: 0.2rem 0.5rem 1rem 0.5rem;
   border: 0.5px solid #ccc;
-  border-radius: 7px;
+  border-radius: 4px;
   background-color: #f5ebeb;
   white-space: normal;
   word-break: break-word;
@@ -211,7 +212,13 @@ hr {
 
 .div-events-content p {
   margin: 0;
-  font-size: 16px;
+  font-size: 12px;
   line-height: 1.2;
+  color: #a3a3a3;
+}
+
+.div-events-content .p-content-0 {
+  color: #222;
+  font-size: 18px;
 }
 </style>
