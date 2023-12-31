@@ -3,7 +3,7 @@ import { ref } from "vue";
 import * as Nostr from "nostr-tools";
 
 import { feedRelays, profileRelays, pool, normalizeUrls } from "./relays";
-import { addUserEvent, getSortedUserEvents } from "./store";
+import { addUserEvent, getSortedUserEvents, userAndEvents } from "./store";
 
 pool.subscribe(
   [{
@@ -50,12 +50,12 @@ function getProfile(pubkey: string): Profile {
   return prof;
 }
 
-async function collectProfiles() {
-  if (cacheMissHitPubkeys.size === 0) {
+async function collectProfiles(force = false) {
+  if (cacheMissHitPubkeys.size === 0 && !force) {
     return;
   }
 
-  const pubkeys = [...new Set<string>([...cacheMissHitPubkeys])];
+  const pubkeys = [...new Set<string>([...userAndEvents.value.keys(), ...cacheMissHitPubkeys])];
   const unsub = pool.subscribe(
     [{
       kinds: [0],
@@ -71,6 +71,11 @@ async function collectProfiles() {
       if (ev.kind === 0) {
         const content = JSON.parse(ev.content);
 
+        if (force && ev.created_at > Math.floor(new Date().getTime() / 1000) - forceProfileUpdateInterval * 2) {
+          pool.publish(ev, [...new Set(normalizeUrls([...feedRelays]))]);
+        } else if (cacheMissHitPubkeys.has(ev.pubkey)) {
+          pool.publish(ev, [...new Set(normalizeUrls([...feedRelays]))]);
+        }
         if (
           !profiles.value.has(ev.pubkey) ||
           profiles.value.get(ev.pubkey)?.created_at < ev.created_at
@@ -98,13 +103,12 @@ async function collectProfiles() {
   );
   const timeout = setTimeout(() => {
     unsub();
-    console.log(`collectProfiles(${timeout}) => Timeout, ${cacheMissHitPubkeys.size} pubkeys remain`);
   }, 5 * 1000);
 }
+setInterval(() => { collectProfiles(false); }, 5 * 1000);
 
-setInterval(() => {
-  collectProfiles();
-}, 5 * 1000);
+const forceProfileUpdateInterval = 29;
+setInterval(() => { collectProfiles(true); }, forceProfileUpdateInterval * 1000);
 
 setInterval(() => {
   // ローカルストレージにプロフィール情報を保存しておく
