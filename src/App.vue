@@ -8,13 +8,13 @@ import { addUserEvent, getSortedUserEvents, userAndEvents } from "./store";
 pool.subscribe(
   [{
     kinds: [1],
-    limit: 5000,
+    limit: 100,
   }],
   [...new Set(normalizeUrls([...feedRelays]))],
   async (ev, _isAfterEose, _relayURL) => {
     addUserEvent(ev);
   },
-  undefined,
+  0,
   undefined,
 );
 
